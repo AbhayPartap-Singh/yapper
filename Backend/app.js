@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import authRouter from "./src/routes/auth.routes.js";
+import aiRouter from "./src/routes/ai.routes.js";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/ai", aiRouter);
 
 export default app;
