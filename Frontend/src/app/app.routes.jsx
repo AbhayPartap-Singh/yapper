@@ -1,12 +1,10 @@
 import { createBrowserRouter } from "react-router";
 import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/Register";
+import Dashboard from "../features/chat/pages/Dashboard";
 
 export const Router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Login />,
-  },
+
   {
     path: "/login",
     element: <Login />,
@@ -14,5 +12,8 @@ export const Router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
-  },
+  },  {
+    path: "/",
+    element: <Dashboard/>,
+  }
 ]);

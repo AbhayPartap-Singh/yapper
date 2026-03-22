@@ -1,18 +1,23 @@
+
 import React, { useState } from 'react'
+import { useAuth } from "../hook/useAuth"; // adjust path if needed
 
 const Register = () => {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = (event) => {
+  const { handleRegister } = useAuth()
+
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    // TODO: integrate with auth API
-    console.log('Register submitted', { username, email, password })
+    await handleRegister({ username, email, password })
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center  from-gray-950 via-red-900 to-black text-white">
+    <div>
+      
+         <div className="min-h-screen flex items-center justify-center  from-gray-950 via-red-900 to-black text-white">
       <div className="w-full max-w-md p-8 rounded-3xl bg-black/70 border border-red-500/40 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 text-red-300 text-center">Register</h2>
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -60,6 +65,8 @@ const Register = () => {
           </button>
         </form>
       </div>
+    </div>
+     
     </div>
   )
 }

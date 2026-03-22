@@ -29,17 +29,15 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    // 🔥 Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+   
 
     const user = await userModel.create({
       username,
       email,
-      password: hashedPassword,
-      isVerified: false // new users start unverified
+      password: Password,
+      isVerified: false
     });
 
-    // 🔥 Create verification token
     const verifyToken = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
@@ -56,13 +54,11 @@ export const registerUser = async (req, res) => {
         <div style="font-family: Arial; padding: 20px;">
           <h2>Hi ${username} 👋</h2>
           <p>Welcome to <b>Yapper</b>!</p>
-          <p>Please verify your email by clicking below:</p>
+          <p>Please verify your email:</p>
           <a href="${verifyLink}" 
-             style="display:inline-block;padding:10px 20px;background:#4CAF50;color:white;text-decoration:none;border-radius:5px;">
+             style="padding:10px 20px;background:#4CAF50;color:white;text-decoration:none;">
             Verify Email
           </a>
-          <br/><br/>
-          <p>Regards,<br/><b>Yapper Team</b></p>
         </div>
       `
     });
@@ -89,8 +85,7 @@ export const verifyEmail = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         message: "Invalid token",
-        success: false,
-        err: "user not found"
+        success: false
       });
     }
 
@@ -104,7 +99,7 @@ export const verifyEmail = async (req, res) => {
 };
 
 // ------------------------------
-// LOGIN USER
+// LOGIN USER (🔥 FIXED)
 // ------------------------------
 export const loginUser = async (req, res) => {
   try {
@@ -124,29 +119,35 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // Check if email is verified
     if (!user.isVerified) {
-      return res.status(400).json({ message: "Please verify your email before logging in" });
+      return res.status(400).json({
+        message: "Please verify your email before logging in"
+      });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({
+        message: "Invalid email or password"
+      });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
-      { id: user._id, 
-      username: user.username },
+      { id: user._id, username: user.username },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" } // token valid for 7 days
+      { expiresIn: "7d" }
     );
-    res.cookie("token",token)
+
+    // ✅ FIXED COOKIE
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax"
+    });
 
     res.status(200).json({
       message: "Login successful",
-      success:true,
+      success: true,
       user: {
         id: user._id,
         username: user.username,
@@ -159,21 +160,31 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const getMe = async (req,res)=>{
-  const userId = req.user.id
-  const user = await userModel.findById(userId).select("-password")
-  if(!user){
-    res.status(404).json({
-      message:"User not found",
-      success:false,
-      err:"user not found"
-    })
-  }
-  
+// ------------------------------
+// GET ME
+// ------------------------------
+export const getMe = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await userModel
+      .findById(userId)
+      .select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false
+      });
+    }
+
     res.status(200).json({
-      message:"User details fetched successfully",
-      success:true,
+      message: "User fetched successfully",
+      success: true,
       user
-    })
-  
-}
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
