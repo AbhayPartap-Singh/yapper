@@ -1,1 +1,159 @@
 @import "tailwindcss";
+
+.bubble {
+  position: absolute;
+  bottom: -120px;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(255, 50, 50, 0.8) 0%, rgba(255, 0, 0, 0.2) 60%, transparent 100%);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 10px rgba(255, 0, 0, 0.6),
+    0 0 20px rgba(255, 0, 0, 0.4),
+    0 0 40px rgba(255, 0, 0, 0.2);
+  animation: rise 12s infinite ease-in;
+  filter: blur(0.5px);
+}
+
+/* Different sizes + speeds */
+.bubble:nth-child(1) {
+  left: 10%;
+  width: 25px;
+  height: 25px;
+  animation-duration: 10s;
+}
+
+.bubble:nth-child(2) {
+  left: 25%;
+  width: 35px;
+  height: 35px;
+  animation-duration: 14s;
+}
+
+.bubble:nth-child(3) {
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  animation-duration: 8s;
+}
+
+.bubble:nth-child(4) {
+  left: 70%;
+  width: 45px;
+  height: 45px;
+  animation-duration: 16s;
+}
+
+.bubble:nth-child(5) {
+  left: 85%;
+  width: 60px;
+  height: 60px;
+  animation-duration: 18s;
+}
+
+/* Animation */
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50vh) scale(1);
+  }
+  100% {
+    transform: translateY(-120vh) scale(1.2);
+    opacity: 0;
+  }
+}
+
+
+/* Base for all layers */
+.stars, .stars2, .stars3, .stars4, .stars5 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background-repeat: repeat;
+}
+
+/* ⭐ Dense small stars (3px) */
+.stars {
+  background-image:
+    radial-gradient(3px 3px at 20px 30px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(3px 3px at 100px 150px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(3px 3px at 200px 80px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(3px 3px at 300px 200px, rgba(255,255,255,0.85), transparent),
+    radial-gradient(3px 3px at 400px 120px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(3px 3px at 500px 300px, rgba(255,255,255,0.9), transparent);
+  background-size: 600px 600px;
+  animation: moveStars 60s linear infinite;
+}
+
+/* ⭐⭐ Medium stars */
+.stars2 {
+  background-image:
+    radial-gradient(4px 4px at 50px 50px, white, transparent),
+    radial-gradient(4px 4px at 150px 120px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(4px 4px at 250px 200px, rgba(255,255,255,0.95), transparent);
+  background-size: 800px 800px;
+  animation: moveStars 100s linear infinite;
+}
+
+/* ⭐⭐⭐ Big glowing stars */
+.stars3 {
+  background-image:
+    radial-gradient(5px 5px at 100px 200px, white, transparent),
+    radial-gradient(5px 5px at 300px 300px, rgba(255,255,255,0.9), transparent);
+  background-size: 1000px 1000px;
+  animation: moveStars 140s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.9));
+}
+
+/* Extra density layers */
+.stars4 {
+  background-image:
+    radial-gradient(3px 3px at 120px 220px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(3px 3px at 320px 180px, rgba(255,255,255,0.9), transparent);
+  background-size: 700px 700px;
+  animation: moveStars 80s linear infinite;
+}
+
+.stars5 {
+  background-image:
+    radial-gradient(4px 4px at 200px 100px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(4px 4px at 400px 250px, rgba(255,255,255,0.85), transparent);
+  background-size: 900px 900px;
+  animation: moveStars 120s linear infinite;
+}
+
+/* Movement */
+@keyframes moveStars {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-1200px);
+  }
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out;
+}
+

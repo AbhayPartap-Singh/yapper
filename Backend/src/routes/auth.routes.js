@@ -1,15 +1,21 @@
 import express from "express";
-import { registerUser, loginUser, verifyEmail, getMe } from "../controllers/auth.controller.js";
-import { authUser } from "../middlewares/auth.middleware.js";
+import {
+  registerUser,
+  loginUser,
+  verifyEmail,
+  getMe
+} from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
-// Public routes
+// AUTH
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+
+// ✅ THIS WAS MISSING / IMPORTANT
 router.get("/verify-email", verifyEmail);
 
-// Protected route
-router.get("/me", authUser, getMe);
+// USER
+router.get("/me", getMe);
 
 export default router;

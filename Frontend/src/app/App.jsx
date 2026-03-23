@@ -1,17 +1,23 @@
-import { RouterProvider } from "react-router-dom";
-import { Router } from "./app.routes";
-import Navbar from "./components/Navbar";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import VerifyEmail from "../pages/VerifyEmail";
 
-const App = () => {
-  return (
-    <div>
-      {/* Navbar must be inside the RouterProvider */}
-      <RouterProvider router={Router}>
-        <Navbar />
-        {/* Outlet for nested routes will render here */}
-      </RouterProvider>
-    </div>
-  );
-};
+import Login from "../features/auth/pages/Login";
+import Register from "../features/auth/pages/Register";
+
+import Dashboard from "../features/chat/pages/Dashboard";
+
+const router = createBrowserRouter([
+  { path: "/", element: <Login /> },
+  { path: "/register", element: <Register /> },
+   { path: "/login", element: <Login /> },
+  // ✅ ADD THIS (fixes your error)
+  { path: "/verify-email", element: <VerifyEmail /> },
+
+  { path: "/dashboard", element: <Dashboard /> },
+]);
+
+function App() {
+  return <RouterProvider router={router} />;
+}
 
 export default App;

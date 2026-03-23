@@ -15,14 +15,12 @@ export const registerUser = async (req, res) => {
     const existingUser = await userModel.findOne({ $or: [{ username }, { email }] });
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await userModel.create({
-      username,
-      email,
-      password: hashedPassword,
-      isVerified: false
-    });
+  const user = await userModel.create({
+  username,
+  email,
+  password, // ✅ plain password (schema will hash it)
+  isVerified: false
+  });
 
     const verifyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
     const verifyLink = `http://localhost:5173/verify-email?token=${verifyToken}`;
@@ -58,7 +56,8 @@ export const loginUser = async (req, res) => {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
     res.status(200).json({
