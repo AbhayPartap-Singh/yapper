@@ -1,52 +1,39 @@
 import { useDispatch } from "react-redux";
-import { register, login, getMe } from '../service/auth.api'
-import { setUser, setLoading, setError } from "../auth.slice";
+import axios from "axios";
+import { setUser } from "../../../app/auth.slice";
 
-export function useAuth() {
-  const dispatch = useDispatch()
+export const useAuth = () => {
+  const dispatch = useDispatch();
 
-  async function handleRegister({ username, email, password }) {
+  const handleRegister = async (data) => {
     try {
-      dispatch(setLoading(true))
-      await register({ username, email, password })
-    } catch (error) {
-      dispatch(setError(error.response?.data?.message || "registration failed"))
-    } finally {
-      dispatch(setLoading(false))
+      await axios.post("http://localhost:3000/api/auth/register", data);
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
     }
-  }
+  };
 
-  async function handleLogin({ email, password }) {
+  const handleLogin = async (data) => {
     try {
-      dispatch(setLoading(true))
-      const data = await login({ email, password })
-      dispatch(setUser(data.user))
-    } catch (error) {
-      dispatch(setError(error.response?.data?.message || "login failed"))
-    } finally {
-      dispatch(setLoading(false))
+      const res = await axios.post("http://localhost:3000/api/auth/login", data, { withCredentials: true });
+      dispatch(setUser(res.data.user));
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
     }
-  }
+  };
 
-  async function handlGetMe() {
+  const handleGetMe = async () => {
     try {
-      dispatch(setLoading(true))
-      const data = await getMe()
-
-      // ✅ FIX: set user
-      dispatch(setUser(data.user))
-
-    } catch (error) {
-      // ❗ don't spam error if not logged in
-      console.log("Not logged in")
-    } finally {
-      dispatch(setLoading(false))
+      const res = await axios.get("http://localhost:3000/api/auth/me", { withCredentials: true });
+      dispatch(setUser(res.data.user));
+    } catch (err) {
+      console.error(err);
     }
-  }
+  };
 
-  return {
-    handleRegister,
-    handleLogin,
-    handlGetMe
-  }
-}
+  return { handleRegister, handleLogin, handleGetMe };
+};

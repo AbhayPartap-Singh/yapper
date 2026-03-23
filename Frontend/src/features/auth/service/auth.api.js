@@ -1,21 +1,21 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "http://localhost:3000/api",
   withCredentials: true
 })
 
-export async function register({ username, email, password }) {
-  const response = await api.post('/api/auth/register', { username, email, password })
-  return response.data
+export async function register(data) {
+  const res = await api.post('/auth/register', data)
+  return res.data
 }
 
-export async function login({ email, password }) {
-  const response = await api.post('/api/auth/login', { email, password })
-  return response.data
+export async function login(data) {
+  const res = await api.post('/auth/login', data)
+  return res.data
 }
 
 export async function getMe() {
-  const response = await api.get('/api/auth/get-me')
-  return response.data
+  const res = await api.get('/auth/get-me')
+  return res.data
 }
