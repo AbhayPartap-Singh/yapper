@@ -23,7 +23,7 @@ export const registerUser = async (req, res) => {
   });
 
     const verifyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    const verifyLink = `http://localhost:5173/verify-email?token=${verifyToken}`;
+    const verifyLink = `http://localhost:3000/api/auth/verify-email?token=${verifyToken}`;
 
     await sendEmail({
       to: email,
@@ -73,6 +73,8 @@ export const loginUser = async (req, res) => {
 export const verifyEmail = async (req, res) => {
   try {
     const { token } = req.query;
+    if (!token) return res.status(400).send("No token provided");
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await userModel.findById(decoded.id);
     if (!user) return res.status(400).send("Invalid token");
@@ -80,20 +82,30 @@ export const verifyEmail = async (req, res) => {
     user.isVerified = true;
     await user.save();
 
-    res.send("✅ Email verified successfully!");
+    // Redirect to homepage after verification
+    return res.redirect("http://localhost:5173"); // ✅ your frontend homepage
   } catch (err) {
-    res.status(400).send("❌ Invalid or expired token");
+    console.error("VERIFY EMAIL ERROR 👉", err);
+    return res.status(400).send("❌ Invalid or expired token");
   }
 };
 
 // ---------------- GET ME ----------------
-export const getMe = async (req, res) => {
+export const getMe = (req, res) => {
   try {
-    const user = await userModel.findById(req.user.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!req.user) {
+      return res.status(401).json({
+        message: "Not authenticated"
+      });
+    }
 
-    res.status(200).json({ user });
+    res.status(200).json({
+      user: req.user
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("GET ME ERROR 👉", err);
+    res.status(500).json({
+      message: "Server error"
+    });
   }
 };

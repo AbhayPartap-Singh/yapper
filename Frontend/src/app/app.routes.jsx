@@ -1,22 +1,24 @@
-import { createBrowserRouter, Outlet } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Login from "../features/auth/pages/Login";
-import Register from "../features/auth/pages/Register";
-import Dashboard from "../features/chat/pages/Dashboard";
+import {createBrowserRouter} from 'react-router-dom'
+import Login from '../features/auth/pages/Login'
+import Register from '../features/auth/pages/Register'
+import Dashboard from '../features/chat/Dashboard'
+import Protected from '../features/auth/components/Protected'
 
-export const Router = createBrowserRouter([
-  {
+export const router = createBrowserRouter([
+    {
     path: "/",
-    element: (
-      <>
-        <Navbar />
-        <Outlet /> {/* nested routes will render here */}
-      </>
-    ),
-    children: [
-      { path: "/", element: <Dashboard /> },
-      { path: "/login", element: <Login /> },
-      { path: "/register", element: <Register /> },
-    ],
+    element: <Protected><Dashboard/></Protected>, // ✅ default route
   },
-]);
+    {
+        path:"/login",
+        element:<Login/>
+    },
+     {
+        path:"/register",
+        element:<Register/>
+    },
+    
+])
+
+
+

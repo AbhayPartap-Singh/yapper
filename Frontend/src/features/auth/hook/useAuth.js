@@ -1,42 +1,50 @@
-import { useDispatch } from "react-redux";
-import { setUser } from "../../../app/auth.slice";
-import { useNavigate } from "react-router-dom";
-import { register, login, getMe } from "../../../lib/api"; // 👈 use your api
+import {useDispatch} from 'react-redux'
+import {register,login,getMe} from "../service/auth.api"
+import { setUser,setLoading,setError } from '../auth.slice'
 
-export const useAuth = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const handleRegister = async (data) => {
-    try {
-      await register(data);
-      navigate("/");
-      return true;
-    } catch (err) {
-      console.error(err);
-      return false;
+export function useAuth(){
+    const dispatch = useDispatch()
+    async function handleRegister({email,username,password}){
+        try {
+            dispatch(setLoading(true))
+            const data = await register({email,username,password})
+        }
+        catch(error){
+            dispatch(setError(error.response?.data?.message||"registration failed"))
+        }
+        finally{
+            dispatch(setLoading(false))
+        }
     }
-  };
 
-  const handleLogin = async (data) => {
-  try {
-   const res = await login(data);
-   dispatch(setUser(res.user));
-    return true;
-  } catch (err) {
-    console.log("LOGIN ERROR 👉", err.response?.data); // 🔥 ADD THIS
-    return false;
-  }
-};
-
-  const handleGetMe = async () => {
+     async function handlelogin({ email, password }) {
     try {
-      const res = await getMe();
-      dispatch(setUser(res.user));
-    } catch (err) {
-      console.error(err);
+        dispatch(setLoading(true))
+        const data = await login({ email, password })
+        dispatch(setUser(data.user))
+        return true; // ✅ success
+    } catch (error) {
+        dispatch(setError(error.response?.data?.message || "login failed"))
+        return false; // ❌ failure
+    } finally {
+        dispatch(setLoading(false))
     }
-  };
+}
 
-  return { handleRegister, handleLogin, handleGetMe };
-};
+    async function handleGetMe(){
+        try {
+            dispatch(setLoading(true))
+            const data = await getMe()
+            dispatch(setUser(data.user))
+        }
+        catch(error){
+            dispatch(setError(error.response?.data?.message||"failed to fetch user"))
+        }
+        finally{
+            dispatch(setLoading(false))
+        }
+    }
+    return {
+        handleRegister,handlelogin,handleGetMe
+    }
+}

@@ -6,16 +6,16 @@ import {
   getMe
 } from "../controllers/auth.controller.js";
 
+import { authUser } from "../middlewares/auth.middleware.js"; // ✅ ADD THIS
+
 const router = express.Router();
 
 // AUTH
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-
-// ✅ THIS WAS MISSING / IMPORTANT
 router.get("/verify-email", verifyEmail);
 
-// USER
-router.get("/me", getMe);
+// USER (🔴 FIXED: added middleware)
+router.get("/get-me", authUser, getMe);
 
 export default router;
