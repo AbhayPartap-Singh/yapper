@@ -3,15 +3,18 @@ dotenv.config();
 
 import app from "./app.js";
 import connectDB from "./src/config/database.js";
+import http from 'http'
+import { initSocket } from "./src/sockets/server.socket.js";
 
 const PORT = process.env.PORT || 3000;
-
+const httpServer = http.createServer(app)
+initSocket(httpServer)
 const startServer = async () => {
   try {
     await connectDB();
     console.log("✅ DB Connected");
 
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
 
