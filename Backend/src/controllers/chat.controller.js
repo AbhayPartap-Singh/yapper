@@ -3,12 +3,10 @@ import Message from "../models/message.model.js";
 import { generateResponse, generateTitle } from "../services/ai.service.js";
 
 // ✅ Send Message
-
 export async function sendMessage(req, res) {
   try {
     const { message, chatId } = req.body;
 
-    // 🔒 Validate input
     if (!message) {
       return res.status(400).json({ message: "Message is required" });
     }
@@ -18,18 +16,20 @@ export async function sendMessage(req, res) {
     }
 
     let chat;
-    let title = null;
 
-    // ✅ Create new chat
+    // 🆕 Create new chat
     if (!chatId) {
-      title = await generateTitle(message);
+      const title = await generateTitle(message);
 
       chat = await Chat.create({
         user: req.user.id,
         title,
       });
     } else {
-      chat = await Chat.findById(chatId);
+      chat = await Chat.findOne({
+        _id: chatId,
+        user: req.user.id,
+      });
 
       if (!chat) {
         return res.status(404).json({ message: "Chat not found" });
@@ -37,34 +37,44 @@ export async function sendMessage(req, res) {
     }
 
     // ✅ Save user message
-    await Message.create({
+    const userMsg = await Message.create({
       chat: chat._id,
       content: message,
       role: "user",
     });
 
-    // 🔥 NEW: Get previous messages (conversation memory)
-    const previousMessages = await Message.find({ chat: chat._id })
-      .sort({ createdAt: 1 });
+    // 🔥 Get previous messages EXCLUDING latest user msg
+    const previousMessages = await Message.find({
+      chat: chat._id,
+      _id: { $ne: userMsg._id },
+    }).sort({ createdAt: 1 });
 
-    // 🔥 UPDATED: Pass history to AI
-    const aiText = await generateResponse(message, previousMessages);
+    // 🔥 Limit memory (important for performance)
+    const limitedHistory = previousMessages.slice(-10);
+
+    // ✅ Generate AI response
+    const aiText = await generateResponse(message, limitedHistory);
+
+    console.log("AI TEXT:", aiText); // 🔍 debug
 
     if (!aiText) {
       return res.status(500).json({ message: "AI response failed" });
     }
 
     // ✅ Save AI message
-    await Message.create({
+    const aiMessage = await Message.create({
       chat: chat._id,
       content: aiText,
       role: "ai",
     });
 
-    res.status(201).json({
-      aiMessage: aiText,
-      chat,
-      title,
+    // ✅ Clean response format
+    res.status(200).json({
+      chatId: chat._id,
+      aiMessage: {
+        role: "ai",
+        content: aiText,
+      },
     });
 
   } catch (err) {
