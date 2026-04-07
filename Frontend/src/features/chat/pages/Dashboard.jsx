@@ -209,7 +209,7 @@ const Dashboard = () => {
           <button
             onClick={() => sendMessageHandler()}
             className="px-4 md:px-6 bg-linear-to-r from-pink-500 to-purple-500 text-white rounded-r"
-          >
+          > 
             Send
           </button>
         </div>
