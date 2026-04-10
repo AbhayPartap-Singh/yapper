@@ -4,7 +4,7 @@ export const initializeSocketConnection = ()=>{
         withCredentials:true
     })
     socket.on("connect",()=>{
-        console.log("connected to Socketio.server")
+        console.log("connected to Socketio.server hi")
     })
 
 }
