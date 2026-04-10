@@ -23,7 +23,7 @@ export const registerUser = async (req, res) => {
   });
 
     const verifyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    const verifyLink = `http://localhost:3000/api/auth/verify-email?token=${verifyToken}`;
+    const verifyLink = `${process.env.SERVER_URL}/api/auth/verify-email?token=${verifyToken}`
 
     await sendEmail({
       to: email,
@@ -54,8 +54,8 @@ export const loginUser = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
@@ -83,7 +83,7 @@ export const verifyEmail = async (req, res) => {
     await user.save();
 
     // Redirect to homepage after verification
-    return res.redirect("http://localhost:5173"); // ✅ your frontend homepage
+    return res.redirect(process.env.CLIENT_URL) // ✅ your frontend homepage
   } catch (err) {
     console.error("VERIFY EMAIL ERROR 👉", err);
     return res.status(400).send("❌ Invalid or expired token");
