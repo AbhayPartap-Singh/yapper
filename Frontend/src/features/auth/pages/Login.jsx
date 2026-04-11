@@ -25,54 +25,59 @@ if(!loading && user){
   return <Navigate to ="/" replace/>
 }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-pink-600 via-pink-200 to-pink-300">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-xl w-87.5 space-y-4"
+<div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#0f172a] via-[#111827] to-[#020617] text-white">
+
+  <form
+    onSubmit={handleSubmit}
+    className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 rounded-2xl shadow-2xl w-87.5 space-y-5"
+  >
+
+    <h2 className="text-2xl font-semibold text-center tracking-wide">
+      Welcome Back
+    </h2>
+
+    <input
+      type="email"
+      placeholder="Email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      required
+      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+    />
+
+    <input
+      type="password"
+      placeholder="Password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+    />
+
+    <button
+      type="submit"
+      disabled={loading}
+      className="w-full py-2 rounded-lg bg-linear-to-r from-indigo-500 to-purple-600 font-medium hover:opacity-90 transition"
+    >
+      {loading ? "Logging in..." : "Login"}
+    </button>
+
+    {error && (
+      <p className="text-center text-sm text-red-400">{error}</p>
+    )}
+
+    <p className="text-center text-sm opacity-70">
+      Don’t have an account?{" "}
+      <Link
+        to="/register"
+        className="text-indigo-400 font-medium hover:underline"
       >
-        <h2 className="text-2xl font-bold text-center text-gray-700">
-          Welcome Back
-        </h2>
+        Register
+      </Link>
+    </p>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-pink-500 text-white py-2 rounded-lg hover:bg-pink-600 transition"
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-
-        {error && <p className="text-center text-sm text-gray-600">{error}</p>}
-
-        <p className="text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <Link
-            to="/register"
-            className="text-pink-500 font-semibold hover:underline"
-          >
-           register
-          </Link>
-        </p>
-      </form>
-    </div>
+  </form>
+</div>
   );
 };
 

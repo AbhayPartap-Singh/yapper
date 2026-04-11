@@ -111,110 +111,122 @@ const Dashboard = () => {
   const currentTheme = themes[theme];
 
   return (
-    <div className={`${currentTheme.bg} h-screen flex flex-col md:flex-row`}>
+ <div className="h-screen flex flex-col md:flex-row bg-linear-to-br from-[#0f172a] via-[#111827] to-[#020617] text-white">
 
-      {/* Sidebar */}
-      <div className={`w-full md:w-72 p-4 ${currentTheme.card} md:border-r overflow-y-auto`}>
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold">Chats</h2>
+  {/* Sidebar */}
+  <div className="w-full md:w-72 p-4 border-r border-white/10 backdrop-blur-xl bg-white/5 overflow-y-auto">
 
-          {/* Theme Selector */}
-          <select
-            value={theme}
-            onChange={(e) => setTheme(e.target.value)}
-            className="text-sm bg-transparent border px-2 py-1 rounded"
-          >
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-            <option value="neon">Neon</option>
-            <option value="ocean">Ocean</option>
-          </select>
-        </div>
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-lg font-semibold tracking-wide">Chats</h2>
 
-        <input
-          placeholder="Search chats..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full mb-3 px-3 py-2 rounded outline-none bg-white/10"
-        />
+      <select
+        value={theme}
+        onChange={(e) => setTheme(e.target.value)}
+        className="text-sm bg-white/10 border border-white/10 px-2 py-1 rounded-md"
+      >
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="neon">Neon</option>
+        <option value="ocean">Ocean</option>
+      </select>
+    </div>
 
-        <button
-          onClick={() => {
-            setActiveChatId(null);
-            setMessages([]);
-          }}
-          className="w-full mb-4 py-2 bg-linear-to-r from-pink-500 to-purple-500 text-white rounded-lg"
+    <input
+      placeholder="Search chats..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="w-full mb-4 px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    />
+
+    <button
+      onClick={() => {
+        setActiveChatId(null);
+        setMessages([]);
+      }}
+      className="w-full mb-4 py-2 rounded-lg bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 transition font-medium"
+    >
+      + New Chat
+    </button>
+
+    <div className="space-y-2">
+      {filteredChats.map(chat => (
+        <div
+          key={chat._id}
+          className="group p-3 rounded-xl cursor-pointer flex justify-between bg-white/5 hover:bg-white/10 transition border border-white/5"
+          onClick={() => loadMessages(chat._id)}
         >
-          + New Chat
-        </button>
+          <div className="flex-1">
+            <div className="font-medium truncate">{chat.title}</div>
+            <div className="text-xs opacity-60 truncate">{chat.snippet}</div>
+          </div>
 
-        <div className="space-y-2">
-          {filteredChats.map(chat => (
-            <div
-              key={chat._id}
-              className={`group p-3 rounded-lg cursor-pointer flex justify-between ${currentTheme.card}`}
-              onClick={() => loadMessages(chat._id)}
-            >
-              <div className="flex-1">
-                <div className="font-medium truncate">{chat.title}</div>
-                <div className="text-xs opacity-60 truncate">{chat.snippet}</div>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(chat._id);
-                }}
-                className="ml-2 text-red-400 opacity-0 group-hover:opacity-100"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Chat */}
-      <div className="flex-1 flex flex-col">
-        <div className="p-4 border-b font-semibold">Yapper</div>
-
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
-          {messages.map((msg, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`group flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div className={`relative px-4 py-2 rounded-2xl max-w-[85%] md:max-w-[60%] ${msg.sender === "user" ? "bg-linear-to-r from-pink-500 to-purple-500 text-white" : currentTheme.card}`}>
-                {msg.text}
-
-                <div className="absolute -bottom-6 right-2 hidden group-hover:flex gap-2 text-xs">
-                  <button onClick={() => handleCopy(msg.text)}>📋</button>
-                  {msg.sender === "ai" && <button onClick={handleRegenerate}>🔄</button>}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <div className="p-3 md:p-4 flex border-t">
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessageHandler()}
-            className="flex-1 px-3 py-2 rounded-l outline-none bg-white/10"
-            placeholder="Ask anything..."
-          />
           <button
-            onClick={() => sendMessageHandler()}
-            className="px-4 md:px-6 bg-linear-to-r from-pink-500 to-purple-500 text-white rounded-r"
-          > 
-            Send
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(chat._id);
+            }}
+            className="ml-2 text-red-400 opacity-0 group-hover:opacity-100 transition"
+          >
+            ✕
           </button>
         </div>
-      </div>
+      ))}
     </div>
+  </div>
+
+  {/* Chat Area */}
+  <div className="flex-1 flex flex-col">
+
+    <div className="p-4 border-b border-white/10 font-semibold backdrop-blur-md bg-white/5">
+      Yapper
+    </div>
+
+    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
+      {messages.map((msg, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`group flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+        >
+          <div
+            className={`relative px-4 py-3 rounded-2xl max-w-[85%] md:max-w-[60%] shadow-lg
+              ${msg.sender === "user"
+                ? "bg-linear-to-r from-indigo-500 to-purple-600 text-white"
+                : "bg-white/5 border border-white/10 backdrop-blur-md"
+              }`}
+          >
+            {msg.text}
+
+            <div className="absolute -bottom-6 right-2 hidden group-hover:flex gap-2 text-xs opacity-70">
+              <button onClick={() => handleCopy(msg.text)}>📋</button>
+              {msg.sender === "ai" && <button onClick={handleRegenerate}>🔄</button>}
+            </div>
+          </div>
+        </motion.div>
+      ))}
+      <div ref={messagesEndRef} />
+    </div>
+
+    <div className="p-3 md:p-4 flex border-t border-white/10 backdrop-blur-md bg-white/5">
+      <input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && sendMessageHandler()}
+        className="flex-1 px-4 py-2 rounded-l-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        placeholder="Ask anything..."
+      />
+
+      <button
+        onClick={sendMessageHandler}
+        className="px-5 bg-linear-to-r from-indigo-500 to-purple-600 rounded-r-lg font-medium hover:opacity-90 transition"
+      >
+        Send
+      </button>
+    </div>
+
+  </div>
+</div>
   );
 };
 
